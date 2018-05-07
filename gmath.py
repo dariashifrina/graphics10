@@ -31,19 +31,22 @@ def calculate_ambient(alight, areflect):
     #ka = constant of ambient reflection (0-1). Ambient = a * ka
     new_mat = []
     for x in range(3):
-        new_mat.append(alight[x] * areflect[x])
+        new_mat.append(int(alight[x] * areflect[x]))
     #print("amb mat:")
     #print(limit_color(new_mat))
     return limit_color(new_mat)
+    #return [0,0,0]
 
 def calculate_diffuse(light, dreflect, normal):
     dot_prod = dot_product(normalize(light[0]), normalize(normal))
     new_mat = []
     for x in range(3):
+        #new_mat.append(light[1][x] * dreflect[x] * dot_prod)
         new_mat.append(int(light[1][x] * dreflect[x] * dot_prod))
     #print("dif mat:")
     #print(new_mat)
     return limit_color(new_mat)
+    #return [0,0,0]
 
 def calculate_specular(light, sreflect, view, normal):
     normalize(normal)
@@ -56,6 +59,7 @@ def calculate_specular(light, sreflect, view, normal):
     for x in range(3):
         new_mat.append(int(light[1][x] * sreflect[x] * (dot_prod2 ** SPECULAR_EXP)))
     return limit_color(new_mat)
+    #return [0,0,0]
 
 def limit_color(color):
     for x in range(3):
