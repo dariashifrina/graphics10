@@ -11,33 +11,70 @@ SPECULAR_EXP = 4
 
 #lighting functions
 def get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect ):
+   # normalize(light[0])
+   # normalize(normal)
+   # normalize(view)
+    amb = calculate_ambient(ambient, areflect)
+   # print("amb:")
+    #print(amb)
+    diff = calculate_diffuse(light, dreflect, normal)
+    spec = calculate_specular(light, sreflect, view, normal)
+    vals = []
+    for x in range(3):
+        vals.append(amb[x] + diff[x] + spec[x])
+    #limit_color(vals)
+    return limit_color(vals)
     
-
-
-    pass
 
 def calculate_ambient(alight, areflect):
     #a: ambient light(0-255)
     #ka = constant of ambient reflection (0-1). Ambient = a * ka
-    new_mat = areflect
-    return matrix_mult(alight, new_mat)
-    pass
+    new_mat = []
+    for x in range(3):
+        new_mat.append(alight[x] * areflect[x])
+    #print("amb mat:")
+    #print(limit_color(new_mat))
+    return limit_color(new_mat)
 
 def calculate_diffuse(light, dreflect, normal):
-    pass
+    dot_prod = dot_product(normalize(light[0]), normalize(normal))
+    new_mat = []
+    for x in range(3):
+        new_mat.append(int(light[1][x] * dreflect[x] * dot_prod))
+    #print("dif mat:")
+    #print(new_mat)
+    return limit_color(new_mat)
 
 def calculate_specular(light, sreflect, view, normal):
-    pass
+    normalize(normal)
+    dot_prod1 = 2 * dot_product(normalize(normal), normalize(light[0]))
+    prod = []
+    for x in range(3):
+        prod.append((dot_prod1 * normalize(normal)[x]) - normalize(light[0])[x])
+    dot_prod2 = dot_product(prod, normalize(view))
+    new_mat = []
+    for x in range(3):
+        new_mat.append(int(light[1][x] * sreflect[x] * (dot_prod2 ** SPECULAR_EXP)))
+    return limit_color(new_mat)
 
 def limit_color(color):
-    pass
+    for x in range(3):
+        if(color[x] <0):
+            color[x] = 0
+        if(color[x] > 255):
+            color[x] = 255
+    return color
 
 #vector functions
 def normalize(vector):
-    pass
+    denom = math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2)
+    for x in range(3):
+        vector[x] /=  denom
+    return vector
 
 def dot_product(a, b):
-    pass
+    prod = a[0] * b[0] + a[1]*b[1] + a[2]*b[2]
+    return prod
 
 def calculate_normal(polygons, i):
 
